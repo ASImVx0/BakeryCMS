@@ -1,0 +1,32 @@
+name: Deploy Production
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ "main" ]
+
+permissions:
+  contents: read
+  id-token: write   # for OIDC to cloud (recommended)
+  deployments: write
+
+jobs:
+  build_test_security:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+  deploy_prod:
+    needs: build_test_security
+    runs-on: ubuntu-latest
+
+    # 🔐 This is the key:
+    environment:
+      name: production
+
+    steps:
+      - name: Deploy
+        run: |
+          echo "Deploying to production..."
+          # kubectl apply / helm upgrade / terraform apply / etc.
